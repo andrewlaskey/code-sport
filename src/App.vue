@@ -52,6 +52,12 @@
   <button @click="play">Play</button>
   <button @click="pause">Pause</button>
   <button @click="reset">Reset</button>
+  <p>
+    Learn more
+    <a href="https://github.com/andrewlaskey/code-sport/blob/main/README.md"
+      >README.md</a
+    >
+  </p>
 </template>
 
 <script setup>
@@ -102,6 +108,21 @@ const createMoveFunction = (fnString) => {
     'y',
     'vx',
     'vy',
+    `
+    try {
+      with (Math) {
+        return ${fnString};
+      }
+    } catch (error) {
+      return error;
+    }
+  `
+  )
+}
+
+const createPlaceFunction = (fnString) => {
+  return new Function(
+    'i',
     `
     try {
       with (Math) {
@@ -169,25 +190,25 @@ const play = () => {
   teamTwoPlayers.value = []
   points.value = []
 
-  teamOneFuncs.placeX = createMoveFunction(teamOne.placeX)
-  teamOneFuncs.placeY = createMoveFunction(teamOne.placeY)
+  teamOneFuncs.placeX = createPlaceFunction(teamOne.placeX)
+  teamOneFuncs.placeY = createPlaceFunction(teamOne.placeY)
   teamOneFuncs.moveX = createMoveFunction(teamOne.moveX)
   teamOneFuncs.moveY = createMoveFunction(teamOne.moveY)
 
-  teamTwoFuncs.placeX = createMoveFunction(teamTwo.placeX)
-  teamTwoFuncs.placeY = createMoveFunction(teamTwo.placeY)
+  teamTwoFuncs.placeX = createPlaceFunction(teamTwo.placeX)
+  teamTwoFuncs.placeY = createPlaceFunction(teamTwo.placeY)
   teamTwoFuncs.moveX = createMoveFunction(teamTwo.moveX)
   teamTwoFuncs.moveY = createMoveFunction(teamTwo.moveY)
 
   for (let index = 0; index < 10; index++) {
     teamOnePlayers.value.push({
-      x: teamOneFuncs.placeX(index, 0, 0),
-      y: teamOneFuncs.placeY(index, 0, 0),
+      x: teamOneFuncs.placeX(index),
+      y: teamOneFuncs.placeY(index),
     })
 
     teamTwoPlayers.value.push({
-      x: teamTwoFuncs.placeX(index, 0, 0),
-      y: teamTwoFuncs.placeY(index, 0, 0),
+      x: teamTwoFuncs.placeX(index),
+      y: teamTwoFuncs.placeY(index),
     })
 
     points.value.push({
