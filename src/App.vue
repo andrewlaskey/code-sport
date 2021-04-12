@@ -102,6 +102,20 @@ const teamOneCode = computed(() => encodeTeam(teamOne))
 const teamTwoCode = computed(() => encodeTeam(teamTwo))
 
 const createMoveFunction = (fnString) => {
+  let saferStr = fnString
+    .replace('alert', '')
+    .replace('dialog', '')
+    .replace('location', '')
+    .replace('confirm', '')
+    .replace('download', '')
+    .replace('eval', '')
+    .replace('console', '')
+    .replace('fetch', '')
+    .replace('print', '')
+    .replace('prompt', '')
+    .replace('open', '')
+    .replace('close', '')
+    .substring(0, 140)
   return new Function(
     'i',
     'x',
@@ -111,7 +125,7 @@ const createMoveFunction = (fnString) => {
     `
     try {
       with (Math) {
-        return ${fnString};
+        return ${saferStr};
       }
     } catch (error) {
       return error;
@@ -121,12 +135,26 @@ const createMoveFunction = (fnString) => {
 }
 
 const createPlaceFunction = (fnString) => {
+  let saferStr = fnString
+    .replace('alert', '')
+    .replace('dialog', '')
+    .replace('location', '')
+    .replace('confirm', '')
+    .replace('download', '')
+    .replace('eval', '')
+    .replace('console', '')
+    .replace('fetch', '')
+    .replace('print', '')
+    .replace('prompt', '')
+    .replace('open', '')
+    .replace('close', '')
+    .substring(0, 140)
   return new Function(
     'i',
     `
     try {
       with (Math) {
-        return ${fnString};
+        return ${saferStr};
       }
     } catch (error) {
       return error;
