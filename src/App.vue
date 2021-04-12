@@ -263,6 +263,7 @@ const reset = () => {
   if (request) {
     window.cancelAnimationFrame(request)
   }
+  timer = new Date()
   teamOneScore.value = 0
   teamOnePlayers.value = []
   teamTwoPlayers.value = []
