@@ -225,6 +225,7 @@ const play = () => {
 
   timer = new Date()
   teamOneScore.value = 0
+  teamTwoScore.value = 0
   teamOnePlayers.value = []
   teamTwoPlayers.value = []
   points.value = []
