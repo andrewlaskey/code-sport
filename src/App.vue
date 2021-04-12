@@ -166,7 +166,7 @@ const createPlaceFunction = (fnString) => {
 }
 
 const runSim = () => {
-  timer = (new Date() - timer) / 1e3
+  timer = (new Date() - timer) / 1000
   teamOnePlayers.value = updateTeam(
     teamOnePlayers.value,
     teamOneFuncs.moveX,
