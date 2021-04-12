@@ -1,6 +1,7 @@
-export const updateTeam = (players, xMoveFn, yMoveFn) => {
+export const updateTeam = (players, xMoveFn, yMoveFn, time) => {
   return players.map((player, index) => {
     const moveX = xMoveFn(
+      time,
       index,
       player.x,
       player.y,
@@ -8,6 +9,7 @@ export const updateTeam = (players, xMoveFn, yMoveFn) => {
       player.vy
     )
     const moveY = yMoveFn(
+      time,
       index,
       player.x,
       player.y,

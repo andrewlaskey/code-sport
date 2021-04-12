@@ -14,6 +14,7 @@ These functions should return a number which will be added to the player's curre
 
 ```
 (
+  t, // delta time
   i, // player index
   x, // current x position
   y, // current y position

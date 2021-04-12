@@ -97,6 +97,7 @@ let teamTwoScore = ref(0)
 const teamOneFuncs = {}
 const teamTwoFuncs = {}
 let request
+let timer
 
 const teamOneCode = computed(() => encodeTeam(teamOne))
 const teamTwoCode = computed(() => encodeTeam(teamTwo))
@@ -117,6 +118,7 @@ const createMoveFunction = (fnString) => {
     .replace('close', '')
     .substring(0, 140)
   return new Function(
+    't',
     'i',
     'x',
     'y',
@@ -164,15 +166,18 @@ const createPlaceFunction = (fnString) => {
 }
 
 const runSim = () => {
+  timer = (new Date() - timer) / 1e3
   teamOnePlayers.value = updateTeam(
     teamOnePlayers.value,
     teamOneFuncs.moveX,
-    teamOneFuncs.moveY
+    teamOneFuncs.moveY,
+    timer
   )
   teamTwoPlayers.value = updateTeam(
     teamTwoPlayers.value,
     teamTwoFuncs.moveX,
-    teamTwoFuncs.moveY
+    teamTwoFuncs.moveY,
+    timer
   )
 
   // Check collision
@@ -213,6 +218,8 @@ const play = () => {
   if (request) {
     window.cancelAnimationFrame(request)
   }
+
+  timer = new Date()
   teamOneScore.value = 0
   teamOnePlayers.value = []
   teamTwoPlayers.value = []
