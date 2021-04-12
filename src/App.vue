@@ -211,6 +211,10 @@ const runSim = () => {
     points.value.splice(index, 1)
   })
 
+  if (points.value.length <= 0) {
+    window.cancelAnimationFrame(request)
+  }
+
   request = window.requestAnimationFrame(runSim)
 }
 
