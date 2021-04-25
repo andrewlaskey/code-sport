@@ -18,23 +18,18 @@
       />
     </div>
     <div class="team-view team-one">
-      <h2 class="team-title">Team One</h2>
+      <h2 class="team-title">Team Red ({{ teamOnePlayers.length }})</h2>
       <team-function-input :team="teamOne" @update="teamOne = $event" />
       <team-code team-number="one" :team="teamOne" :load-team="loadTeam" />
     </div>
     <div class="team-view team-two">
-      <h2 class="team-title">Team Two</h2>
+      <h2 class="team-title">Team Blue ({{ teamTwoPlayers.length }})</h2>
       <team-function-input :team="teamTwo" @update="teamTwo = $event" />
       <team-code team-number="two" :team="teamTwo" :load-team="loadTeam" />
     </div>
   </div>
 
-  <p>
-    Learn more
-    <a href="https://github.com/andrewlaskey/code-sport/blob/main/README.md"
-      >README.md</a
-    >
-  </p>
+  <info />
 </template>
 
 <script setup>
@@ -43,6 +38,7 @@ import { computed, onMounted } from '@vue/runtime-core'
 import PlayCanvas from './components/PlayCanvas.vue'
 import TeamFunctionInput from './components/TeamFunctionInput.vue'
 import TeamCode from './components/TeamCode.vue'
+import Info from './components/Info.vue'
 import { gridUnit } from './common/math'
 import {
   createMoveFunction,
@@ -137,11 +133,36 @@ const runSim = () => {
     points.value.splice(index, 1)
   })
 
+  const playerCollisions = new Set()
+
+  teamOnePlayers.value.forEach((playerOne, indexOne) => {
+    teamTwoPlayers.value.forEach((playerTwo, indexTwo) => {
+      if (
+        gridUnit(playerOne.x) === gridUnit(playerTwo.x) &&
+        gridUnit(playerOne.y) === gridUnit(playerTwo.y)
+      ) {
+        playerCollisions.add([indexOne, indexTwo])
+      }
+    })
+  })
+
+  playerCollisions.forEach(([indexOne, indexTwo]) => {
+    const randTeam = Math.random() > 0.5 ? 1 : 0
+
+    if (randTeam === 1) {
+      teamOnePlayers.value.splice(indexOne, 1)
+    }
+
+    if (randTeam === 0) {
+      teamTwoPlayers.value.splice(indexTwo, 1)
+    }
+  })
+
+  request = window.requestAnimationFrame(runSim)
+
   if (points.value.length <= 0) {
     window.cancelAnimationFrame(request)
   }
-
-  request = window.requestAnimationFrame(runSim)
 }
 
 const play = () => {
@@ -226,24 +247,27 @@ const loadTeam = (team, code) => {
   color: #2c3e50;
   margin-top: 60px;
   padding: 1rem 3rem;
+  min-width: 650px;
 }
 
-.flex-wrap {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-}
+@media screen and (min-width: 1200px) {
+  .flex-wrap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
 
-.center-view {
-  order: 2;
-}
+  .center-view {
+    order: 2;
+  }
 
-.team-one {
-  order: 1;
-}
+  .team-one {
+    order: 1;
+  }
 
-.team-two {
-  order: 3;
+  .team-two {
+    order: 3;
+  }
 }
 
 .score-board {
