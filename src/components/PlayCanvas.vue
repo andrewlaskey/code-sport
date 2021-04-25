@@ -38,7 +38,7 @@ function drawObj(x, y, color) {
 
 function draw(teamOne, teamTwo, points) {
   ctx.clearRect(0, 0, canvasEl.width, canvasEl.height)
-  grid()
+  // grid()
 
   teamOne.forEach((player) => {
     drawObj(player.x, player.y, 'red')
@@ -90,4 +90,8 @@ onUpdated(() => {
 })
 </script>
 
-<style></style>
+<style>
+canvas {
+  border: 1px solid;
+}
+</style>

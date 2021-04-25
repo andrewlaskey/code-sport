@@ -1,57 +1,34 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
-  <play-canvas
-    :teamOne="teamOnePlayers"
-    :teamTwo="teamTwoPlayers"
-    :points="points"
-  />
-  <div class="row">
-    <div class="column">
-      <h2>{{ teamOneScore }}</h2>
-      <div>
-        <label>Place X</label><input v-model="teamOne.placeX" type="text" />
+  <div class="flex-wrap">
+    <div class="center-view">
+      <div class="score-board">
+        <h2>{{ teamOneScore }}</h2>
+        <div class="game-actions">
+          <button @click="play">Play</button>
+          <button @click="pause">Pause</button>
+          <button @click="reset">Reset</button>
+        </div>
+        <h2>{{ teamTwoScore }}</h2>
       </div>
-      <div>
-        <label>Place Y</label><input v-model="teamOne.placeY" type="text" />
-      </div>
-      <div>
-        <label>Move X</label><input v-model="teamOne.moveX" type="text" />
-      </div>
-      <div>
-        <label>Move Y</label><input v-model="teamOne.moveY" type="text" />
-      </div>
-      <div>
-        <label>Team code</label>
-        <input :value="teamOneCode" type="text" readonly="readonly" /><br />
-        <input v-model="teamCodes.one" type="text" />
-        <button @click="loadTeam('one', teamCodes.one)">Load Team</button>
-      </div>
+      <play-canvas
+        :teamOne="teamOnePlayers"
+        :teamTwo="teamTwoPlayers"
+        :points="points"
+      />
     </div>
-    <div class="column">
-      <h2>{{ teamTwoScore }}</h2>
-      <div>
-        <label>Place X</label><input v-model="teamTwo.placeX" type="text" />
-      </div>
-      <div>
-        <label>Place Y</label><input v-model="teamTwo.placeY" type="text" />
-      </div>
-      <div>
-        <label>Move X</label><input v-model="teamTwo.moveX" type="text" />
-      </div>
-      <div>
-        <label>Move Y</label><input v-model="teamTwo.moveY" type="text" />
-      </div>
-      <div>
-        <label>Team code</label>
-        <input :value="teamTwoCode" type="text" readonly="readonly" /><br />
-        <input v-model="teamCodes.two" type="text" />
-        <button @click="loadTeam('two', teamCodes.two)">Load Team</button>
-      </div>
+    <div class="team-view team-one">
+      <h2 class="team-title">Team One</h2>
+      <team-function-input :team="teamOne" @update="teamOne = $event" />
+      <team-code team-number="one" :team="teamOne" :load-team="loadTeam" />
+    </div>
+    <div class="team-view team-two">
+      <h2 class="team-title">Team Two</h2>
+      <team-function-input :team="teamTwo" @update="teamTwo = $event" />
+      <team-code team-number="two" :team="teamTwo" :load-team="loadTeam" />
     </div>
   </div>
-  <button @click="play">Play</button>
-  <button @click="pause">Pause</button>
-  <button @click="reset">Reset</button>
+
   <p>
     Learn more
     <a href="https://github.com/andrewlaskey/code-sport/blob/main/README.md"
@@ -64,6 +41,8 @@
 import { reactive, ref } from '@vue/reactivity'
 import { computed, onMounted } from '@vue/runtime-core'
 import PlayCanvas from './components/PlayCanvas.vue'
+import TeamFunctionInput from './components/TeamFunctionInput.vue'
+import TeamCode from './components/TeamCode.vue'
 import { gridUnit } from './common/math'
 import {
   createMoveFunction,
@@ -236,13 +215,41 @@ const loadTeam = (team, code) => {
 </script>
 
 <style>
+* {
+  box-sizing: border-box;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  padding: 1rem 3rem;
+}
+
+.flex-wrap {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.center-view {
+  order: 2;
+}
+
+.team-one {
+  order: 1;
+}
+
+.team-two {
+  order: 3;
+}
+
+.score-board {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 input[type='text'] {
@@ -256,5 +263,9 @@ input[type='text'] {
 
 .column {
   padding: 0 2em 2em;
+}
+
+.team-title {
+  text-align: center;
 }
 </style>
