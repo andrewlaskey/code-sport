@@ -30,6 +30,7 @@ export default {}
 <style>
 .game-info {
   margin: 0 auto;
+  padding: 1rem;
   width: 600px;
 }
 

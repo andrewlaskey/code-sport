@@ -41,15 +41,15 @@ function draw(teamOne, teamTwo, points) {
   // grid()
 
   teamOne.forEach((player) => {
-    drawObj(player.x, player.y, 'red')
+    drawObj(player.x, player.y, '#d56871') // red
   })
 
   teamTwo.forEach((player) => {
-    drawObj(player.x, player.y, 'blue')
+    drawObj(player.x, player.y, '#62afee') // blue
   })
 
   points.forEach((point) => {
-    drawObj(point.x, point.y, 'green')
+    drawObj(point.x, point.y, '#8fb874') // green
   })
 }
 
@@ -92,6 +92,7 @@ onUpdated(() => {
 
 <style>
 canvas {
-  border: 1px solid;
+  /* border: 1px solid; */
+  background: #21262a;
 }
 </style>

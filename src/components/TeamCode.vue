@@ -60,10 +60,11 @@ const loadTeamCode = ref('')
 }
 
 .team-code input[type='text'] {
-  padding: 0.25em 0.5em;
+  padding: 0.5em;
   border: none;
   width: 100%;
-  background: #ecdfc7;
+  background: #383e42;
+  color: #dcdcdc;
   font-family: 'Couier New', monospace;
 }
 

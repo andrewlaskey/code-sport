@@ -2,8 +2,9 @@
   <div class="team-input">
     <div class="code-input">
       <p>
-        function placeX(i) {<br />
-        <span class="indent">return</span>
+        <span class="lang-style-1">function</span>
+        <span class="lang-style-2"> placeX</span>(i) {<br />
+        <span class="indent lang-style-1">return</span>
       </p>
       <textarea
         :value="props.team.placeX"
@@ -13,8 +14,9 @@
     </div>
     <div class="code-input">
       <p>
-        function placeY(i) {<br />
-        <span class="indent">return</span>
+        <span class="lang-style-1">function</span>
+        <span class="lang-style-2"> placeY</span>(i) {<br />
+        <span class="indent lang-style-1">return</span>
       </p>
       <textarea
         :value="props.team.placeY"
@@ -24,8 +26,9 @@
     </div>
     <div class="code-input">
       <p>
-        function moveX(t, i, x, y, vx, vy) {<br />
-        <span class="indent">return</span>
+        <span class="lang-style-1">function</span>
+        <span class="lang-style-2"> moveX</span>(t, i, x, y, vx, vy) {<br />
+        <span class="indent lang-style-1">return</span>
       </p>
       <textarea
         :value="props.team.moveX"
@@ -35,8 +38,9 @@
     </div>
     <div class="code-input">
       <p>
-        function moveX(t, i, x, y, vx, vy) {<br />
-        <span class="indent">return</span>
+        <span class="lang-style-1">function</span>
+        <span class="lang-style-2"> moveY</span>(t, i, x, y, vx, vy) {<br />
+        <span class="indent lang-style-1">return</span>
       </p>
       <textarea
         :value="props.team.moveY"
@@ -78,6 +82,7 @@ const update = (key, value) => {
   text-align: left;
   font-family: 'Courier New', monospace;
   font-weight: bold;
+  white-space: pre;
 }
 
 .code-input p {
@@ -90,9 +95,19 @@ const update = (key, value) => {
 
 .code-input textarea {
   margin-left: 1em;
+  padding: 0.5em;
   border: none;
-  background: #ecdfc7;
-  width: 100%;
+  background: #383e42;
+  color: #dcdcdc;
+  width: calc(100% - 1em);
   min-height: 3em;
+}
+
+.code-input .lang-style-1 {
+  color: #bd75d3;
+}
+
+.code-input .lang-style-2 {
+  color: #4a909a;
 }
 </style>

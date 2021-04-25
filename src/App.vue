@@ -1,5 +1,6 @@
 <template>
   <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
+  <h1 style="text-align: center">Capture the Flags</h1>
   <div class="flex-wrap">
     <div class="center-view">
       <div class="score-board">
@@ -18,12 +19,16 @@
       />
     </div>
     <div class="team-view team-one">
-      <h2 class="team-title">Team Red ({{ teamOnePlayers.length }})</h2>
+      <h2 class="team-title" style="color: #d56871">
+        Team Red ({{ teamOnePlayers.length }})
+      </h2>
       <team-function-input :team="teamOne" @update="teamOne = $event" />
       <team-code team-number="one" :team="teamOne" :load-team="loadTeam" />
     </div>
     <div class="team-view team-two">
-      <h2 class="team-title">Team Blue ({{ teamTwoPlayers.length }})</h2>
+      <h2 class="team-title" style="color: #62afee">
+        Team Blue ({{ teamTwoPlayers.length }})
+      </h2>
       <team-function-input :team="teamTwo" @update="teamTwo = $event" />
       <team-code team-number="two" :team="teamTwo" :load-team="loadTeam" />
     </div>
@@ -240,11 +245,15 @@ const loadTeam = (team, code) => {
   box-sizing: border-box;
 }
 
+body {
+  background: #282d33;
+  color: #dcdcdc;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
   margin-top: 60px;
   padding: 1rem 3rem;
   min-width: 650px;
@@ -270,26 +279,34 @@ const loadTeam = (team, code) => {
   }
 }
 
+.team-view {
+  padding: 0 1rem;
+}
+
 .score-board {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-input[type='text'] {
-  width: 24em;
-}
-
-.row {
-  display: flex;
-  justify-content: center;
-}
-
-.column {
-  padding: 0 2em 2em;
-}
-
 .team-title {
   text-align: center;
+}
+
+button {
+  padding: 0.5em 1em;
+  border: none;
+  outline: none;
+  background-color: #dad8d8;
+}
+
+button:hover,
+button:focus {
+  cursor: pointer;
+  background-color: #c2c2c2;
+}
+
+.score-board button {
+  margin: 0 5px;
 }
 </style>
