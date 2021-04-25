@@ -1,7 +1,17 @@
-export const updateTeam = (players, xMoveFn, yMoveFn, time) => {
+import safeEval from '../modules/notevil'
+
+export const createMoveFunction = (fnString) => {
+  return safeEval.Function('t', 'i', 'x', 'y', 'vx', 'vy', `return ${fnString}`)
+}
+
+export const createPlaceFunction = (fnString) => {
+  return safeEval.Function('i', `return ${fnString}`)
+}
+
+export const updateTeam = (players, fnX, fnY, time) => {
   return players.map((player, index) => {
     const { x, y, vx, vy } = player
-    const moveX = xMoveFn(
+    const moveX = fnX(
       time,
       index,
       x,
@@ -9,7 +19,7 @@ export const updateTeam = (players, xMoveFn, yMoveFn, time) => {
       vx,
       vy
     )
-    const moveY = yMoveFn(
+    const moveY = fnY(
       time,
       index,
       x,
@@ -25,6 +35,24 @@ export const updateTeam = (players, xMoveFn, yMoveFn, time) => {
       vy: moveY,
     }
   })
+}
+
+export const placeTeam = (playerNum, fnX, fnY) => {
+  const newTeam = []
+
+  for (let index = 0; index < playerNum; index++) {
+    const placeX = fnX(index)
+    const placeY = fnY(index)
+
+    newTeam.push({
+      x: placeX,
+      y: placeY,
+      vx: 0,
+      vy: 0,
+    })
+  }
+
+  return newTeam
 }
 
 export const encodeTeam = (teamFuncs) => {

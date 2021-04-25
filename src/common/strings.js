@@ -1,0 +1,20 @@
+export function sanitize(str) {
+  return str
+  .replace('alert', '')
+  .replace('dialog', '')
+  .replace('location', '')
+  .replace('confirm', '')
+  .replace('download', '')
+  .replace('eval', '')
+  .replace('console', '')
+  .replace('fetch', '')
+  .replace('print', '')
+  .replace('prompt', '')
+  .replace('open', '')
+  .replace('close', '')
+  .replace('window', '')
+  .replace('this', '')
+  .replace("'", '')
+  .replace('new', '')
+  .substring(0, 140)
+}

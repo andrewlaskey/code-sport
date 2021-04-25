@@ -65,7 +65,15 @@ import { reactive, ref } from '@vue/reactivity'
 import { computed, onMounted } from '@vue/runtime-core'
 import PlayCanvas from './components/PlayCanvas.vue'
 import { gridUnit } from './common/math'
-import { decodeTeam, encodeTeam, updateTeam } from './common/team'
+import {
+  createMoveFunction,
+  createPlaceFunction,
+  decodeTeam,
+  encodeTeam,
+  placeTeam,
+  updateTeam,
+} from './common/team'
+import { sanitize } from './common/strings'
 
 // This starter template is using Vue 3 experimental <script setup> SFCs
 // Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
@@ -94,8 +102,6 @@ let points = ref([])
 let teamOneScore = ref(0)
 let teamTwoScore = ref(0)
 
-const teamOneFuncs = {}
-const teamTwoFuncs = {}
 let request
 let startTime
 let timer = ref(0)
@@ -103,81 +109,21 @@ let timer = ref(0)
 const teamOneCode = computed(() => encodeTeam(teamOne))
 const teamTwoCode = computed(() => encodeTeam(teamTwo))
 
-const createMoveFunction = (fnString) => {
-  let saferStr = fnString
-    .replace('alert', '')
-    .replace('dialog', '')
-    .replace('location', '')
-    .replace('confirm', '')
-    .replace('download', '')
-    .replace('eval', '')
-    .replace('console', '')
-    .replace('fetch', '')
-    .replace('print', '')
-    .replace('prompt', '')
-    .replace('open', '')
-    .replace('close', '')
-    .substring(0, 140)
-  return new Function(
-    't',
-    'i',
-    'x',
-    'y',
-    'vx',
-    'vy',
-    `
-    try {
-      with (Math) {
-        return ${saferStr};
-      }
-    } catch (error) {
-      return error;
-    }
-  `
-  )
-}
-
-const createPlaceFunction = (fnString) => {
-  let saferStr = fnString
-    .replace('alert', '')
-    .replace('dialog', '')
-    .replace('location', '')
-    .replace('confirm', '')
-    .replace('download', '')
-    .replace('eval', '')
-    .replace('console', '')
-    .replace('fetch', '')
-    .replace('print', '')
-    .replace('prompt', '')
-    .replace('open', '')
-    .replace('close', '')
-    .substring(0, 140)
-  return new Function(
-    'i',
-    `
-    try {
-      with (Math) {
-        return ${saferStr};
-      }
-    } catch (error) {
-      return error;
-    }
-  `
-  )
-}
+const teamOneFns = {}
+const teamTwoFns = {}
 
 const runSim = () => {
   timer.value = (new Date() - startTime) / 1000
   teamOnePlayers.value = updateTeam(
     teamOnePlayers.value,
-    teamOneFuncs.moveX,
-    teamOneFuncs.moveY,
+    teamOneFns.xMoveFn,
+    teamOneFns.yMoveFn,
     timer.value
   )
   teamTwoPlayers.value = updateTeam(
     teamTwoPlayers.value,
-    teamTwoFuncs.moveX,
-    teamTwoFuncs.moveY,
+    teamTwoFns.xMoveFn,
+    teamTwoFns.yMoveFn,
     timer.value
   )
 
@@ -231,27 +177,20 @@ const play = () => {
   teamTwoPlayers.value = []
   points.value = []
 
-  teamOneFuncs.placeX = createPlaceFunction(teamOne.placeX)
-  teamOneFuncs.placeY = createPlaceFunction(teamOne.placeY)
-  teamOneFuncs.moveX = createMoveFunction(teamOne.moveX)
-  teamOneFuncs.moveY = createMoveFunction(teamOne.moveY)
+  teamOneFns.xMoveFn = createMoveFunction(teamOne.moveX)
+  teamOneFns.yMoveFn = createMoveFunction(teamOne.moveY)
+  teamOneFns.xPlaceFn = createPlaceFunction(teamOne.placeX)
+  teamOneFns.yPlaceFn = createPlaceFunction(teamOne.placeY)
 
-  teamTwoFuncs.placeX = createPlaceFunction(teamTwo.placeX)
-  teamTwoFuncs.placeY = createPlaceFunction(teamTwo.placeY)
-  teamTwoFuncs.moveX = createMoveFunction(teamTwo.moveX)
-  teamTwoFuncs.moveY = createMoveFunction(teamTwo.moveY)
+  teamTwoFns.xMoveFn = createMoveFunction(teamTwo.moveX)
+  teamTwoFns.yMoveFn = createMoveFunction(teamTwo.moveY)
+  teamTwoFns.xPlaceFn = createPlaceFunction(teamTwo.placeX)
+  teamTwoFns.yPlaceFn = createPlaceFunction(teamTwo.placeY)
+
+  teamOnePlayers.value = placeTeam(10, teamOneFns.xPlaceFn, teamOneFns.yPlaceFn)
+  teamTwoPlayers.value = placeTeam(10, teamTwoFns.xPlaceFn, teamTwoFns.yPlaceFn)
 
   for (let index = 0; index < 10; index++) {
-    teamOnePlayers.value.push({
-      x: teamOneFuncs.placeX(index),
-      y: teamOneFuncs.placeY(index),
-    })
-
-    teamTwoPlayers.value.push({
-      x: teamTwoFuncs.placeX(index),
-      y: teamTwoFuncs.placeY(index),
-    })
-
     points.value.push({
       x: Math.random() * 59,
       y: Math.random() * 59,
