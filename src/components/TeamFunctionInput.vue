@@ -8,7 +8,7 @@
       </p>
       <textarea
         :value="props.team.placeX"
-        @input="$emit('update', update('placeX', $event.target.value))"
+        @input="updateTeam(teamNumber, update('placeX', $event.target.value))"
       />
       <p>}</p>
     </div>
@@ -20,7 +20,7 @@
       </p>
       <textarea
         :value="props.team.placeY"
-        @input="$emit('update', update('placeY', $event.target.value))"
+        @input="updateTeam(teamNumber, update('placeY', $event.target.value))"
       />
       <p>}</p>
     </div>
@@ -32,7 +32,7 @@
       </p>
       <textarea
         :value="props.team.moveX"
-        @input="$emit('update', update('moveX', $event.target.value))"
+        @input="updateTeam(teamNumber, update('moveX', $event.target.value))"
       />
       <p>}</p>
     </div>
@@ -44,7 +44,7 @@
       </p>
       <textarea
         :value="props.team.moveY"
-        @input="$emit('update', update('moveY', $event.target.value))"
+        @input="updateTeam(teamNumber, update('moveY', $event.target.value))"
       />
       <p>}</p>
     </div>
@@ -55,6 +55,10 @@
 import { defineEmit, defineProps } from '@vue/runtime-core'
 
 const props = defineProps({
+  teamNumber: {
+    type: String,
+    default: 'one',
+  },
   team: {
     type: Object,
     default: () => ({
@@ -64,9 +68,13 @@ const props = defineProps({
       moveY: '1',
     }),
   },
+  updateTeam: {
+    type: Function,
+    default: () => ({}),
+  },
 })
 
-defineEmit('update')
+const emit = defineEmit(['update:team'])
 
 const update = (key, value) => {
   return {

@@ -22,14 +22,22 @@
       <h2 class="team-title" style="color: #d56871">
         Team Red ({{ teamOnePlayers.length }})
       </h2>
-      <team-function-input :team="teamOne" @update="teamOne = $event" />
+      <team-function-input
+        team-number="one"
+        :team="teamOne"
+        :update-team="onInputTeamUpdate"
+      />
       <team-code team-number="one" :team="teamOne" :load-team="loadTeam" />
     </div>
     <div class="team-view team-two">
       <h2 class="team-title" style="color: #62afee">
         Team Blue ({{ teamTwoPlayers.length }})
       </h2>
-      <team-function-input :team="teamTwo" @update="teamTwo = $event" />
+      <team-function-input
+        team-number="one"
+        :team="teamTwo"
+        :update-team="onInputTeamUpdate"
+      />
       <team-code team-number="two" :team="teamTwo" :load-team="loadTeam" />
     </div>
   </div>
@@ -70,10 +78,6 @@ const teamTwo = reactive({
   moveY: '-1',
   placeX: 'i * 2',
   placeY: '59',
-})
-
-const teamCodes = reactive({
-  one: '',
 })
 
 let teamOnePlayers = ref([])
@@ -236,6 +240,22 @@ const loadTeam = (team, code) => {
     teamTwo.moveY = obj.moveY || '1'
     teamTwo.placeX = obj.placeX || 'i * 2'
     teamTwo.placeY = obj.placeY || '0'
+  }
+}
+
+const onInputTeamUpdate = (team, updatedTeam) => {
+  if (team === 'one') {
+    teamOne.moveX = updatedTeam.moveX || '1'
+    teamOne.moveY = updatedTeam.moveY || '1'
+    teamOne.placeX = updatedTeam.placeX || 'i * 2'
+    teamOne.placeY = updatedTeam.placeY || '0'
+  }
+
+  if (team === 'two') {
+    teamTwo.moveX = updatedTeam.moveX || '1'
+    teamTwo.moveY = updatedTeam.moveY || '1'
+    teamTwo.placeX = updatedTeam.placeX || 'i * 2'
+    teamTwo.placeY = updatedTeam.placeY || '0'
   }
 }
 </script>
