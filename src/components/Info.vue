@@ -13,18 +13,12 @@
       <code>Math.PI</code>
     </p>
     <p>Example: <code>random() * 59</code></p>
-    <h3>Examples</h3>
-    <p>
-      Random Move<br /><pre
-        >eyJtb3ZlWCI6Iih2eCA+IDAgPyAoeCA8IDU5ID8gMSA6IC0xKSA6ICh4ID4gMCA/IC0xIDogMSkpICogcmFuZG9tKCkiLCJtb3ZlWSI6Iih2eSA+IDAgPyAoeSA8IDU5ID8gMSA6IC0xKSA6ICh5ID4gMCA/IC0xIDogMSkpICogcmFuZG9tKCkiLCJwbGFjZVgiOiJyYW5kb20oKSAqIDU5IiwicGxhY2VZIjoicmFuZG9tKCkgKiA1OSJ9</pre
-      >
-    </p>
-    <p>Scan Each Line<br /><pre>eyJtb3ZlWCI6ImNvbnN0IGRpcyA9IChHQU1FX1NJWkUgLyB0ZWFtU2l6ZSk7XG5cbmlmICh2eCA+IDApIHtcbiBpZiAoeCA8IChpICsgMSkgKiBkaXMpIHtcbiAgIHJldHVybiAxO1xuIH1cbiByZXR1cm4gLTE7XG59IGVsc2Uge1xuIGlmICh4ID4gaSAqIGRpcykge1xuICByZXR1cm4gLTE7XG4gfVxufVxuXG5yZXR1cm4gMTsiLCJtb3ZlWSI6ImNvbnN0IGRpcyA9IChHQU1FX1NJWkUgLyB0ZWFtU2l6ZSk7XG5cbmlmICh4ID49IChpICsgMSkgKiBkaXMpIHtcbiBpZiAodnkpIHtcbiAgcmV0dXJuIDA7XG4gfSBcbiByZXR1cm4gMTtcbn1cbnJldHVybiAwOyIsInBsYWNlWCI6InJldHVybiBpICogKEdBTUVfU0laRSAvIHRlYW1TaXplKSIsInBsYWNlWSI6InJldHVybiAwIn0=</pre></p>
+    <team-example-list />
   </div>
 </template>
 
-<script>
-export default {}
+<script setup>
+import TeamExampleList from './TeamExampleList.vue';
 </script>
 
 <style>
