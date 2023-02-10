@@ -14,7 +14,7 @@ export const wrapInGrid = (num, size = GAME_SIZE) => {
     return 0;
   }
 
-  if (num <= 0) {
+  if (num < 0) {
     return size - 1;
   }
 
