@@ -4,7 +4,6 @@
       <p>
         <span class="lang-style-1">function</span>
         <span class="lang-style-2"> placeX</span>(i) {<br />
-        <span class="indent lang-style-1">return</span>
       </p>
       <textarea
         :value="props.team.placeX"
@@ -16,7 +15,6 @@
       <p>
         <span class="lang-style-1">function</span>
         <span class="lang-style-2"> placeY</span>(i) {<br />
-        <span class="indent lang-style-1">return</span>
       </p>
       <textarea
         :value="props.team.placeY"
@@ -28,7 +26,6 @@
       <p>
         <span class="lang-style-1">function</span>
         <span class="lang-style-2"> moveX</span>(t, i, x, y, vx, vy) {<br />
-        <span class="indent lang-style-1">return</span>
       </p>
       <textarea
         :value="props.team.moveX"
@@ -40,7 +37,6 @@
       <p>
         <span class="lang-style-1">function</span>
         <span class="lang-style-2"> moveY</span>(t, i, x, y, vx, vy) {<br />
-        <span class="indent lang-style-1">return</span>
       </p>
       <textarea
         :value="props.team.moveY"
@@ -108,7 +104,7 @@ const update = (key, value) => {
   background: #383e42;
   color: #dcdcdc;
   width: calc(100% - 1em);
-  min-height: 3em;
+  min-height: 5em;
 }
 
 .code-input .lang-style-1 {

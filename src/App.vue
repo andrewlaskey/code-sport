@@ -48,7 +48,7 @@
 
 <script setup>
 import { reactive, ref } from '@vue/reactivity'
-import { computed, onMounted } from '@vue/runtime-core'
+import { computed } from '@vue/runtime-core'
 import PlayCanvas from './components/PlayCanvas.vue'
 import TeamFunctionInput from './components/TeamFunctionInput.vue'
 import TeamCode from './components/TeamCode.vue'
@@ -62,24 +62,37 @@ import {
   placeTeam,
   updateTeam,
 } from './common/team'
-import { sanitize } from './common/strings'
 
 // This starter template is using Vue 3 experimental <script setup> SFCs
 // Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
 
+const defaultTeamOne = {
+  moveX: 'return 1',
+  moveY: 'return 1',
+  placeX: 'return i * (GAME_SIZE / teamSize)',
+  placeY: 'return 0',
+};
+
+const defaultTeamTwo = {
+  moveX: 'return 1',
+  moveY: 'return -1',
+  placeX: 'return i * (GAME_SIZE / teamSize)',
+  placeY: 'return GAME_SIZE',
+};
+
 const teamOne = reactive({
-  moveX: '1',
-  moveY: '1',
-  placeX: 'i * (GAME_SIZE / teamSize)',
-  placeY: '0',
-})
+  moveX: defaultTeamOne.moveX,
+  moveY: defaultTeamOne.moveY,
+  placeX: defaultTeamOne.placeX,
+  placeY: defaultTeamOne.placeY
+});
 
 const teamTwo = reactive({
-  moveX: '1',
-  moveY: '-1',
-  placeX: 'i * (GAME_SIZE / teamSize)',
-  placeY: 'GAME_SIZE',
-})
+  moveX: defaultTeamTwo.moveX,
+  moveY: defaultTeamTwo.moveY,
+  placeX: defaultTeamTwo.placeX,
+  placeY: defaultTeamTwo.placeY
+});
 
 let isPaused = ref(false);
 let isPlaying = ref(false);
@@ -247,17 +260,17 @@ const loadTeam = (team, code) => {
   const obj = decodeTeam(code)
 
   if (team === 'one') {
-    teamOne.moveX = obj.moveX || '1'
-    teamOne.moveY = obj.moveY || '1'
-    teamOne.placeX = obj.placeX || 'i * 2'
-    teamOne.placeY = obj.placeY || '0'
+    teamOne.moveX = obj.moveX || defaultTeamOne.moveX;
+    teamOne.moveY = obj.moveY || defaultTeamTwo.moveY;
+    teamOne.placeX = obj.placeX || defaultTeamOne.placeX;
+    teamOne.placeY = obj.placeY || defaultTeamOne.placeY;
   }
 
   if (team === 'two') {
-    teamTwo.moveX = obj.moveX || '1'
-    teamTwo.moveY = obj.moveY || '1'
-    teamTwo.placeX = obj.placeX || 'i * 2'
-    teamTwo.placeY = obj.placeY || '0'
+    teamTwo.moveX = obj.moveX || defaultTeamTwo.moveX;
+    teamTwo.moveY = obj.moveY || defaultTeamTwo.moveY;
+    teamTwo.placeX = obj.placeX || defaultTeamTwo.placeX;
+    teamTwo.placeY = obj.placeY || defaultTeamTwo.placeY;
   }
 }
 
