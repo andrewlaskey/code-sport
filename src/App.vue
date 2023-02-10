@@ -221,7 +221,7 @@ const runSim = () => {
 
     if (teamOneScore.value > teamTwoScore.value) {
       teamOneWins.value++;
-    } else {
+    } else if (teamOneScore.value < teamTwoScore.value) {
       teamTwoWins.value++;
     }
   }
