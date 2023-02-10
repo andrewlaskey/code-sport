@@ -14,15 +14,15 @@
         <h2>{{ teamTwoScore }} ({{teamTwoWins}})</h2>
       </div>
       <play-canvas
-        :teamOne="teamOnePlayers"
-        :teamTwo="teamTwoPlayers"
-        :points="points"
+        :teamOne="field.teamOnePlayers"
+        :teamTwo="field.teamTwoPlayers"
+        :points="field.flags"
       />
       <p v-show="noActionTimer > 20 * 1000">No Action Warning! {{ Math.floor((MAX_TIME_NO_ACTION - noActionTimer) / 1000) }}</p>
     </div>
     <div class="team-view team-one">
       <h2 class="team-title" style="color: #d56871">
-        Team Red ({{ teamOnePlayers.length }})
+        Team Red ({{ field.teamOnePlayers.length }})
       </h2>
       <team-function-input
         team-number="one"
@@ -33,7 +33,7 @@
     </div>
     <div class="team-view team-two">
       <h2 class="team-title" style="color: #62afee">
-        Team Blue ({{ teamTwoPlayers.length }})
+        Team Blue ({{ field.teamTwoPlayers.length }})
       </h2>
       <team-function-input
         team-number="two"
@@ -55,6 +55,7 @@ import TeamFunctionInput from './components/TeamFunctionInput.vue'
 import TeamCode from './components/TeamCode.vue'
 import Info from './components/Info.vue'
 import { gridUnit } from './common/math'
+import { playField } from './common/game-state'
 import {
   createMoveFunction,
   createPlaceFunction,
@@ -99,9 +100,10 @@ const teamTwo = reactive({
 let isPaused = ref(false);
 let isPlaying = ref(false);
 
-let teamOnePlayers = ref([])
-let teamTwoPlayers = ref([])
-let points = ref([])
+let field = reactive(playField);
+// let teamOnePlayers = ref([])
+// let teamTwoPlayers = ref([])
+// let points = ref([])
 let teamOneScore = ref(0)
 let teamTwoScore = ref(0)
 
@@ -123,15 +125,16 @@ const runSim = () => {
   timer.value = (new Date() - startTime) / 1000
   noActionTimer.value += timer.value;
 
-  teamOnePlayers.value = updateTeam(
-    teamOnePlayers.value,
+
+  field.teamOnePlayers = updateTeam(
+    field.teamOnePlayers,
     teamOneFns.xMoveFn,
     teamOneFns.yMoveFn,
     timer.value,
     teamOneScore.value
   )
-  teamTwoPlayers.value = updateTeam(
-    teamTwoPlayers.value,
+  field.teamTwoPlayers = updateTeam(
+    field.teamTwoPlayers,
     teamTwoFns.xMoveFn,
     teamTwoFns.yMoveFn,
     timer.value,
@@ -143,8 +146,8 @@ const runSim = () => {
    */
   const collisionIndexes = new Set()
 
-  teamOnePlayers.value.forEach((player) => {
-    points.value.forEach((point, index) => {
+  field.teamOnePlayers.forEach((player) => {
+    field.flags.forEach((point, index) => {
       if (
         gridUnit(player.x) === gridUnit(point.x) &&
         gridUnit(player.y) === gridUnit(point.y)
@@ -155,8 +158,8 @@ const runSim = () => {
     })
   })
 
-  teamTwoPlayers.value.forEach((player) => {
-    points.value.forEach((point, index) => {
+  field.teamTwoPlayers.forEach((player) => {
+    field.flags.forEach((point, index) => {
       if (
         gridUnit(player.x) === gridUnit(point.x) &&
         gridUnit(player.y) === gridUnit(point.y)
@@ -172,7 +175,7 @@ const runSim = () => {
   }
 
   collisionIndexes.forEach((index) => {
-    points.value.splice(index, 1)
+    field.flags.splice(index, 1)
   })
 
   /**
@@ -182,8 +185,8 @@ const runSim = () => {
    */
   const playerCollisions = new Set()
 
-  teamOnePlayers.value.forEach((playerOne, indexOne) => {
-    teamTwoPlayers.value.forEach((playerTwo, indexTwo) => {
+  field.teamOnePlayers.forEach((playerOne, indexOne) => {
+    field.teamTwoPlayers.forEach((playerTwo, indexTwo) => {
       if (
         gridUnit(playerOne.x) === gridUnit(playerTwo.x) &&
         gridUnit(playerOne.y) === gridUnit(playerTwo.y)
@@ -201,18 +204,18 @@ const runSim = () => {
     const randTeam = Math.random() > 0.5 ? 1 : 0
 
     if (randTeam === 1) {
-      teamOnePlayers.value.splice(indexOne, 1)
+      field.teamOnePlayers.splice(indexOne, 1)
     }
 
     if (randTeam === 0) {
-      teamTwoPlayers.value.splice(indexTwo, 1)
+      field.teamTwoPlayers.splice(indexTwo, 1)
     }
   })
 
   request = window.requestAnimationFrame(runSim);
 
   // Win Condition
-  if (points.value.length <= 0 || noActionTimer.value > MAX_TIME_NO_ACTION) {
+  if (field.flags.length <= 0 || noActionTimer.value > MAX_TIME_NO_ACTION) {
     window.cancelAnimationFrame(request);
     noActionTimer.value = 0;
 
@@ -235,9 +238,9 @@ const play = () => {
     timer.value = 0
     teamOneScore.value = 0
     teamTwoScore.value = 0
-    teamOnePlayers.value = []
-    teamTwoPlayers.value = []
-    points.value = []
+    field.teamOnePlayers = []
+    field.teamTwoPlayers = []
+    field.flags = []
 
     teamOneFns.xMoveFn = createMoveFunction(teamOne.moveX)
     teamOneFns.yMoveFn = createMoveFunction(teamOne.moveY)
@@ -249,11 +252,11 @@ const play = () => {
     teamTwoFns.xPlaceFn = createPlaceFunction(teamTwo.placeX)
     teamTwoFns.yPlaceFn = createPlaceFunction(teamTwo.placeY)
 
-    teamOnePlayers.value = placeTeam(10, teamOneFns.xPlaceFn, teamOneFns.yPlaceFn)
-    teamTwoPlayers.value = placeTeam(10, teamTwoFns.xPlaceFn, teamTwoFns.yPlaceFn)
+    field.teamOnePlayers = placeTeam(10, teamOneFns.xPlaceFn, teamOneFns.yPlaceFn)
+    field.teamTwoPlayers = placeTeam(10, teamTwoFns.xPlaceFn, teamTwoFns.yPlaceFn)
 
     for (let index = 0; index < 10; index++) {
-      points.value.push({
+      field.flags.push({
         x: Math.random() * 59,
         y: Math.random() * 59,
       })
@@ -283,9 +286,9 @@ const reset = () => {
 
   teamOneScore.value = 0
   teamTwoScore.value = 0
-  teamOnePlayers.value = []
-  teamTwoPlayers.value = []
-  points.value = []
+  field.teamOnePlayers = []
+  field.teamTwoPlayers = []
+  field.flags = []
 }
 
 const loadTeam = (team, code) => {
