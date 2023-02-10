@@ -1,38 +1,40 @@
 <template>
-  <canvas :width="size" :height="size" id="c" />
+  <canvas :width="sizeInPx" :height="sizeInPx" id="c" />
 </template>
 
 <script setup>
 import { onMounted, onUpdated } from '@vue/runtime-core'
+import { GAME_SIZE } from '../common/constants';
 import { gridUnit } from '../common/math'
 
 let canvasEl
 let ctx
 
-const size = 600
-const gridSize = 10
+const gridSizeInPx = 10
+const sizeInPx = GAME_SIZE * gridSizeInPx
 
-function drawLine(startX, startY, endX, endY) {
-  ctx.fillStyle = 'black'
-  ctx.beginPath()
-  ctx.moveTo(startX, startY)
-  ctx.lineTo(endX, endY)
-  ctx.stroke()
-}
 
-function grid() {
-  if (ctx) {
-    for (let index = 0; index < size / gridSize; index++) {
-      drawLine(0, index * gridSize, size, index * gridSize)
-      drawLine(index * gridSize, 0, index * gridSize, size)
-    }
-  }
-}
+// function drawLine(startX, startY, endX, endY) {
+//   ctx.fillStyle = 'black'
+//   ctx.beginPath()
+//   ctx.moveTo(startX, startY)
+//   ctx.lineTo(endX, endY)
+//   ctx.stroke()
+// }
+
+// function grid() {
+//   if (ctx) {
+//     for (let index = 0; index < size / gridSize; index++) {
+//       drawLine(0, index * gridSize, size, index * gridSize)
+//       drawLine(index * gridSize, 0, index * gridSize, size)
+//     }
+//   }
+// }
 
 function drawObj(x, y, color) {
   if (ctx) {
     ctx.fillStyle = color
-    ctx.fillRect(gridUnit(x) * 10, gridUnit(y) * 10, gridSize, gridSize)
+    ctx.fillRect(gridUnit(x) * 10, gridUnit(y) * 10, gridSizeInPx, gridSizeInPx)
   }
 }
 
