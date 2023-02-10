@@ -10,8 +10,7 @@
     <h3>Available Functions and Variables</h3>
     <p>
       <code>Math</code> methods sin, abs, acos, asin, atan, atan2, cbrt, ceil,
-      cos, exp, floor, max, min, pow, random, sign, sin, sqrt, tan, trunc, and
-      <code>Math.PI</code>
+      cos, exp, floor, max, min, pow, random, sign, sin, sqrt, tan, and trunc
     </p>
     <p>
       <code>GAME_SIZE</code>: constant representing size of field in units<br>
