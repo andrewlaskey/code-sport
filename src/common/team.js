@@ -29,8 +29,11 @@ export const createPlaceFunction = (fnString) => {
 export const updateTeam = (players, fnX, fnY, time, score = 0) => {
   return players.map((player, index) => {
     const { x, y, vx, vy } = player;
-    const moveX = fnX(time, index, x, y, vx, vy, players.length, score);
-    const moveY = fnY(time, index, x, y, vx, vy, players.length, score);
+
+    const outputX = fnX(time, index, x, y, vx, vy, players.length, score);
+    const outputY = fnY(time, index, x, y, vx, vy, players.length, score);
+    const moveX = outputX > 0 ? 1 : outputX < 0 ? -1 : 0;
+    const moveY = outputY > 0 ? 1 : outputY < 0 ? -1 : 0;
 
     return {
       x: wrapInGrid(x + moveX),

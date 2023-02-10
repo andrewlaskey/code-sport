@@ -351,7 +351,7 @@ function evaluateAst(tree, context){
             const builtIn = builtIns[node.callee.name]
 
             if (builtIn) {
-              return builtIn(args)
+              return builtIn(...args)
             }
           }
 
