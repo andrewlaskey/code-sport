@@ -6,9 +6,10 @@
       <div class="score-board">
         <h2>{{ teamOneScore }}</h2>
         <div class="game-actions">
-          <button @click="play">Play</button>
-          <button @click="pause">Pause</button>
-          <button @click="reset">Reset</button>
+          <button v-show="!isPlaying && !isPaused" @click="play" >Play</button>
+          <button v-show="isPlaying" @click="reset">Reset</button>
+          <button v-show="isPlaying && !isPaused" @click="pause">Pause</button>
+          <button v-show="isPlaying && isPaused" @click="resume">Resume</button>
         </div>
         <h2>{{ teamTwoScore }}</h2>
       </div>
@@ -34,7 +35,7 @@
         Team Blue ({{ teamTwoPlayers.length }})
       </h2>
       <team-function-input
-        team-number="one"
+        team-number="two"
         :team="teamTwo"
         :update-team="onInputTeamUpdate"
       />
@@ -79,6 +80,9 @@ const teamTwo = reactive({
   placeX: 'i * (GAME_SIZE / teamSize)',
   placeY: 'GAME_SIZE',
 })
+
+let isPaused = ref(false);
+let isPlaying = ref(false);
 
 let teamOnePlayers = ref([])
 let teamTwoPlayers = ref([])
@@ -177,48 +181,60 @@ const runSim = () => {
 }
 
 const play = () => {
-  if (request) {
-    window.cancelAnimationFrame(request)
-  }
-  startTime = new Date()
-  timer.value = 0
-  teamOneScore.value = 0
-  teamTwoScore.value = 0
-  teamOnePlayers.value = []
-  teamTwoPlayers.value = []
-  points.value = []
+    if (request) {
+      window.cancelAnimationFrame(request)
+    }
 
-  teamOneFns.xMoveFn = createMoveFunction(teamOne.moveX)
-  teamOneFns.yMoveFn = createMoveFunction(teamOne.moveY)
-  teamOneFns.xPlaceFn = createPlaceFunction(teamOne.placeX)
-  teamOneFns.yPlaceFn = createPlaceFunction(teamOne.placeY)
+    isPlaying.value = true;
+    isPaused.value = false;
+    startTime = new Date()
+    timer.value = 0
+    teamOneScore.value = 0
+    teamTwoScore.value = 0
+    teamOnePlayers.value = []
+    teamTwoPlayers.value = []
+    points.value = []
 
-  teamTwoFns.xMoveFn = createMoveFunction(teamTwo.moveX)
-  teamTwoFns.yMoveFn = createMoveFunction(teamTwo.moveY)
-  teamTwoFns.xPlaceFn = createPlaceFunction(teamTwo.placeX)
-  teamTwoFns.yPlaceFn = createPlaceFunction(teamTwo.placeY)
+    teamOneFns.xMoveFn = createMoveFunction(teamOne.moveX)
+    teamOneFns.yMoveFn = createMoveFunction(teamOne.moveY)
+    teamOneFns.xPlaceFn = createPlaceFunction(teamOne.placeX)
+    teamOneFns.yPlaceFn = createPlaceFunction(teamOne.placeY)
 
-  teamOnePlayers.value = placeTeam(10, teamOneFns.xPlaceFn, teamOneFns.yPlaceFn)
-  teamTwoPlayers.value = placeTeam(10, teamTwoFns.xPlaceFn, teamTwoFns.yPlaceFn)
+    teamTwoFns.xMoveFn = createMoveFunction(teamTwo.moveX)
+    teamTwoFns.yMoveFn = createMoveFunction(teamTwo.moveY)
+    teamTwoFns.xPlaceFn = createPlaceFunction(teamTwo.placeX)
+    teamTwoFns.yPlaceFn = createPlaceFunction(teamTwo.placeY)
 
-  for (let index = 0; index < 10; index++) {
-    points.value.push({
-      x: Math.random() * 59,
-      y: Math.random() * 59,
-    })
-  }
+    teamOnePlayers.value = placeTeam(10, teamOneFns.xPlaceFn, teamOneFns.yPlaceFn)
+    teamTwoPlayers.value = placeTeam(10, teamTwoFns.xPlaceFn, teamTwoFns.yPlaceFn)
+
+    for (let index = 0; index < 10; index++) {
+      points.value.push({
+        x: Math.random() * 59,
+        y: Math.random() * 59,
+      })
+    }
 
   request = window.requestAnimationFrame(runSim)
 }
 
 const pause = () => {
   window.cancelAnimationFrame(request)
+  isPaused.value = true;
+}
+
+const resume = () => {
+  request = window.requestAnimationFrame(runSim)
+  isPaused.value = false;
 }
 
 const reset = () => {
   if (request) {
     window.cancelAnimationFrame(request)
   }
+
+  isPlaying.value = false;
+  isPaused.value = false;
 
   teamOneScore.value = 0
   teamTwoScore.value = 0
@@ -245,19 +261,20 @@ const loadTeam = (team, code) => {
   }
 }
 
+
 const onInputTeamUpdate = (team, updatedTeam) => {
   if (team === 'one') {
-    teamOne.moveX = updatedTeam.moveX || '1'
-    teamOne.moveY = updatedTeam.moveY || '1'
-    teamOne.placeX = updatedTeam.placeX || 'i * 2'
-    teamOne.placeY = updatedTeam.placeY || '0'
+    teamOne.moveX = updatedTeam.moveX
+    teamOne.moveY = updatedTeam.moveY
+    teamOne.placeX = updatedTeam.placeX
+    teamOne.placeY = updatedTeam.placeY
   }
 
   if (team === 'two') {
-    teamTwo.moveX = updatedTeam.moveX || '1'
-    teamTwo.moveY = updatedTeam.moveY || '1'
-    teamTwo.placeX = updatedTeam.placeX || 'i * 2'
-    teamTwo.placeY = updatedTeam.placeY || '0'
+    teamTwo.moveX = updatedTeam.moveX
+    teamTwo.moveY = updatedTeam.moveY
+    teamTwo.placeX = updatedTeam.placeX
+    teamTwo.placeY = updatedTeam.placeY
   }
 }
 </script>
