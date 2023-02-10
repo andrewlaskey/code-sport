@@ -69,15 +69,15 @@ import { sanitize } from './common/strings'
 const teamOne = reactive({
   moveX: '1',
   moveY: '1',
-  placeX: 'i * 2',
+  placeX: 'i * (GAME_SIZE / teamSize)',
   placeY: '0',
 })
 
 const teamTwo = reactive({
   moveX: '1',
   moveY: '-1',
-  placeX: 'i * 2',
-  placeY: '59',
+  placeX: 'i * (GAME_SIZE / teamSize)',
+  placeY: 'GAME_SIZE',
 })
 
 let teamOnePlayers = ref([])
@@ -102,13 +102,15 @@ const runSim = () => {
     teamOnePlayers.value,
     teamOneFns.xMoveFn,
     teamOneFns.yMoveFn,
-    timer.value
+    timer.value,
+    teamOneScore.value
   )
   teamTwoPlayers.value = updateTeam(
     teamTwoPlayers.value,
     teamTwoFns.xMoveFn,
     teamTwoFns.yMoveFn,
-    timer.value
+    timer.value,
+    teamTwoScore.value
   )
 
   // Check collision

@@ -1,4 +1,5 @@
 import safeEval from "../modules/notevil";
+import { GAME_SIZE } from "./constants";
 import { wrapInGrid } from "./math";
 
 export const createMoveFunction = (fnString) => {
@@ -9,21 +10,27 @@ export const createMoveFunction = (fnString) => {
     "y",
     "vx",
     "vy",
-    `return ${fnString}`
+    // "Hidden" args
+    "teamSize",
+    "teamPoints",
+    `const GAME_SIZE = ${GAME_SIZE}; return ${fnString}`
   );
 };
 
 export const createPlaceFunction = (fnString) => {
-  return safeEval.Function("i", `return ${fnString}`);
+  return safeEval.Function(
+    "i",
+    // "Hidden" args
+    "teamSize",
+    `const GAME_SIZE = ${GAME_SIZE}; return ${fnString}`
+  );
 };
 
-export const updateTeam = (players, fnX, fnY, time) => {
+export const updateTeam = (players, fnX, fnY, time, score = 0) => {
   return players.map((player, index) => {
     const { x, y, vx, vy } = player;
-    const moveX = fnX(time, index, x, y, vx, vy);
-    const moveY = fnY(time, index, x, y, vx, vy);
-
-    console.log(wrapInGrid(x + moveX));
+    const moveX = fnX(time, index, x, y, vx, vy, players.length, score);
+    const moveY = fnY(time, index, x, y, vx, vy, players.length, score);
 
     return {
       x: wrapInGrid(x + moveX),
@@ -34,12 +41,12 @@ export const updateTeam = (players, fnX, fnY, time) => {
   });
 };
 
-export const placeTeam = (playerNum, fnX, fnY) => {
+export const placeTeam = (teamSize, fnX, fnY) => {
   const newTeam = [];
 
-  for (let index = 0; index < playerNum; index++) {
-    const placeX = fnX(index);
-    const placeY = fnY(index);
+  for (let index = 0; index < teamSize; index++) {
+    const placeX = fnX(index, teamSize);
+    const placeY = fnY(index, teamSize);
 
     newTeam.push({
       x: wrapInGrid(placeX),
