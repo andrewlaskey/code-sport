@@ -56,12 +56,12 @@ export const placeTeam = (playerNum, fnX, fnY) => {
 }
 
 export const encodeTeam = (teamFuncs) => {
-  return btoa(JSON.stringify(teamFuncs))
+  return window.btoa(JSON.stringify(teamFuncs))
 }
 
 export const decodeTeam = (code) => {
   try {
-    return code ? JSON.parse(atob(code)) : {}
+    return code ? JSON.parse(window.atob(code)) : {}
   } catch {
     return {}
   }

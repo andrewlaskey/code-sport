@@ -52,7 +52,7 @@
 </template>
 
 <script setup>
-import { defineEmit, defineProps } from '@vue/runtime-core'
+import { defineEmits, defineProps } from '@vue/runtime-core'
 
 const props = defineProps({
   teamNumber: {
@@ -74,7 +74,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmit(['update:team'])
+const emit = defineEmits(['update:team'])
 
 const update = (key, value) => {
   return {
