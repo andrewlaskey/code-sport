@@ -13,7 +13,7 @@ export const createMoveFunction = (fnString) => {
     // "Hidden" args
     "teamSize",
     "teamPoints",
-    `const GAME_SIZE = ${GAME_SIZE}; return ${fnString}`
+    `const GAME_SIZE = ${GAME_SIZE}; ${fnString}`
   );
 };
 
@@ -22,7 +22,7 @@ export const createPlaceFunction = (fnString) => {
     "i",
     // "Hidden" args
     "teamSize",
-    `const GAME_SIZE = ${GAME_SIZE}; return ${fnString}`
+    `const GAME_SIZE = ${GAME_SIZE}; ${fnString}`
   );
 };
 
