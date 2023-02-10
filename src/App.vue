@@ -223,6 +223,12 @@ const runSim = () => {
       teamOneWins.value++;
     } else if (teamOneScore.value < teamTwoScore.value) {
       teamTwoWins.value++;
+    } else if (teamOneScore.value === teamTwoScore.value) {
+      if (field.teamOnePlayers.length > field.teamTwoPlayers.length) {
+        teamOneWins.value++;
+      } else if (field.teamOnePlayers.length < field.teamTwoPlayers.length) {
+        teamTwoWins.value++;
+      }
     }
   }
 }
