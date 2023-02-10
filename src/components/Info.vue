@@ -6,13 +6,18 @@
       <li>If two opposing players collide, one will randomly be removed.</li>
       <li>Set and update player positions with code.</li>
     </ol>
-    <h3>Available Functions</h3>
+    <h3>Available Functions and Variables</h3>
     <p>
       <code>Math</code> methods sin, abs, acos, asin, atan, atan2, cbrt, ceil,
       cos, exp, floor, max, min, pow, random, sign, sin, sqrt, tan, trunc, and
       <code>Math.PI</code>
     </p>
-    <p>Example: <code>random() * 59</code></p>
+    <p>
+      <code>GAME_SIZE</code>: constant representing size of field in units<br>
+      <code>teamSize</code>: current number of active players on team<br>
+      <code>teamScore</code>: current team score<br>
+    </p>
+    <p>Example: <code>random() * GAME_SIZE</code></p>
     <team-example-list />
   </div>
 </template>
