@@ -4,20 +4,21 @@
   <div class="flex-wrap">
     <div class="center-view">
       <div class="score-board">
-        <h2>{{ teamOneScore }}</h2>
+        <h2>{{ teamOneScore }} ({{ teamOneWins }})</h2>
         <div class="game-actions">
           <button v-show="!isPlaying && !isPaused" @click="play" >Play</button>
           <button v-show="isPlaying" @click="reset">Reset</button>
           <button v-show="isPlaying && !isPaused" @click="pause">Pause</button>
           <button v-show="isPlaying && isPaused" @click="resume">Resume</button>
         </div>
-        <h2>{{ teamTwoScore }}</h2>
+        <h2>{{ teamTwoScore }} ({{teamTwoWins}})</h2>
       </div>
       <play-canvas
         :teamOne="field.teamOnePlayers"
         :teamTwo="field.teamTwoPlayers"
         :points="field.flags"
       />
+      <p v-show="noActionTimer > 20 * 1000">No Action Warning! {{ Math.floor((MAX_TIME_NO_ACTION - noActionTimer) / 1000) }}</p>
     </div>
     <div class="team-view team-one">
       <h2 class="team-title" style="color: #d56871">
@@ -63,6 +64,7 @@ import {
   placeTeam,
   updateTeam,
 } from './common/team'
+import { MAX_TIME_NO_ACTION } from './common/constants';
 
 // This starter template is using Vue 3 experimental <script setup> SFCs
 // Check out https://github.com/vuejs/rfcs/blob/script-setup-2/active-rfcs/0000-script-setup.md
@@ -108,6 +110,7 @@ let teamTwoScore = ref(0)
 let request
 let startTime
 let timer = ref(0)
+let noActionTimer = ref(0);
 
 const teamOneCode = computed(() => encodeTeam(teamOne))
 const teamTwoCode = computed(() => encodeTeam(teamTwo))
@@ -115,8 +118,14 @@ const teamTwoCode = computed(() => encodeTeam(teamTwo))
 const teamOneFns = {}
 const teamTwoFns = {}
 
+let teamOneWins = ref(0);
+let teamTwoWins = ref(0);
+
 const runSim = () => {
   timer.value = (new Date() - startTime) / 1000
+  noActionTimer.value += timer.value;
+
+
   field.teamOnePlayers = updateTeam(
     field.teamOnePlayers,
     teamOneFns.xMoveFn,
@@ -132,7 +141,9 @@ const runSim = () => {
     teamTwoScore.value
   )
 
-  // Check collision
+  /**
+   * Handle flag capture collisions
+   */
   const collisionIndexes = new Set()
 
   field.teamOnePlayers.forEach((player) => {
@@ -159,10 +170,19 @@ const runSim = () => {
     })
   })
 
+  if (collisionIndexes.length > 0) {
+    noActionTimer.value = 0;
+  }
+
   collisionIndexes.forEach((index) => {
     field.flags.splice(index, 1)
   })
 
+  /**
+   * Handle Player Collisions
+   * 
+   * If two opposing team players collide, then randomly eliminate one of them
+   */
   const playerCollisions = new Set()
 
   field.teamOnePlayers.forEach((playerOne, indexOne) => {
@@ -176,6 +196,10 @@ const runSim = () => {
     })
   })
 
+  if (playerCollisions.length > 0) {
+    noActionTimer.value = 0;
+  }
+
   playerCollisions.forEach(([indexOne, indexTwo]) => {
     const randTeam = Math.random() > 0.5 ? 1 : 0
 
@@ -188,10 +212,18 @@ const runSim = () => {
     }
   })
 
-  request = window.requestAnimationFrame(runSim)
+  request = window.requestAnimationFrame(runSim);
 
-  if (field.flags.length <= 0) {
-    window.cancelAnimationFrame(request)
+  // Win Condition
+  if (field.flags.length <= 0 || noActionTimer.value > MAX_TIME_NO_ACTION) {
+    window.cancelAnimationFrame(request);
+    noActionTimer.value = 0;
+
+    if (teamOneScore.value > teamTwoScore.value) {
+      teamOneWins.value++;
+    } else if (teamOneScore.value < teamTwoScore.value) {
+      teamTwoWins.value++;
+    }
   }
 }
 
@@ -250,6 +282,7 @@ const reset = () => {
 
   isPlaying.value = false;
   isPaused.value = false;
+  noActionTimer.value = 0;
 
   teamOneScore.value = 0
   teamTwoScore.value = 0
@@ -283,6 +316,7 @@ const onInputTeamUpdate = (team, updatedTeam) => {
     teamOne.moveY = updatedTeam.moveY
     teamOne.placeX = updatedTeam.placeX
     teamOne.placeY = updatedTeam.placeY
+    teamOneWins.value = 0;
   }
 
   if (team === 'two') {
@@ -290,6 +324,7 @@ const onInputTeamUpdate = (team, updatedTeam) => {
     teamTwo.moveY = updatedTeam.moveY
     teamTwo.placeX = updatedTeam.placeX
     teamTwo.placeY = updatedTeam.placeY
+    teamTwoWins.value = 0;
   }
 }
 </script>
