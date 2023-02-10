@@ -5,6 +5,7 @@
       <li>Capture the most points.</li>
       <li>If two opposing players collide, one will randomly be removed.</li>
       <li>Set and update player positions with code.</li>
+      <li>If nothing happens for 30s, game will end.</li>
     </ol>
     <h3>Available Functions and Variables</h3>
     <p>
