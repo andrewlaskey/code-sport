@@ -63,8 +63,8 @@ export const updateTeam = (players, fnX, fnY, time, score = 0) => {
 };
 
 const neighborData = (playerX, playerY, otherX, otherY) => {
-  const xRel = Math.ceil(otherX - playerX);
-  const yRel = Math.ceil(otherY - playerY);
+  const xRel = Math.round(otherX - playerX);
+  const yRel = Math.round(otherY - playerY);
   const xDiff = Math.abs(xRel);
   const yDiff = Math.abs(yRel);
   const inVision = xDiff + yDiff > 0 && xDiff <= PLAYER_VISION && yDiff <= PLAYER_VISION;
