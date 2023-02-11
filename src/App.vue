@@ -105,9 +105,6 @@ let isPaused = ref(false);
 let isPlaying = ref(false);
 
 let field = reactive(playField);
-// let teamOnePlayers = ref([])
-// let teamTwoPlayers = ref([])
-// let points = ref([])
 let teamOneScore = ref(0)
 let teamTwoScore = ref(0)
 

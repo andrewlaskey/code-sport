@@ -33,7 +33,7 @@
     <div class="code-input">
       <p>
         <span class="lang-style-1">function</span>
-        <span class="lang-style-2"> moveX</span>(t, i, x, y, vx, vy) {<br />
+        <span class="lang-style-2"> moveX</span>(t, i, x, y, vx, vy, neighbors) {<br />
       </p>
       <code-docs>// Updates player x-position each tick.
         <br>// t: total time elapsed
@@ -41,7 +41,8 @@
         <br>// x: current x-position
         <br>// y: current y-position
         <br>// vx: previous move update x-axis
-        <br>// yx: previous move update y-axis
+        <br>// vy: previous move update y-axis
+        <br>// neighbors: flags {x,y} within 6 units
         <br>// @returns 0, 1, or -1
       </code-docs>
       <textarea
@@ -53,7 +54,7 @@
     <div class="code-input">
       <p>
         <span class="lang-style-1">function</span>
-        <span class="lang-style-2"> moveY</span>(t, i, x, y, vx, vy) {<br />
+        <span class="lang-style-2"> moveY</span>(t, i, x, y, vx, vy, neighbors) {<br />
       </p>
       <code-docs>// Updates player y-position each tick.
         <br>// t: total time elapsed
@@ -61,7 +62,8 @@
         <br>// x: current x-position
         <br>// y: current y-position
         <br>// vx: previous move update x-axis
-        <br>// yx: previous move update y-axis
+        <br>// vy: previous move update y-axis
+        <br>// neighbors: flags {x,y} within 6 units
         <br>// @returns 0, 1, or -1
       </code-docs>
       <textarea
