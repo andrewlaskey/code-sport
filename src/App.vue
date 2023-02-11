@@ -18,7 +18,11 @@
         :teamTwo="field.teamTwoPlayers"
         :points="field.flags"
       />
-      <p v-show="noActionTimer > 20 * 1000">No Action Warning! {{ Math.floor((MAX_TIME_NO_ACTION - noActionTimer) / 1000) }}</p>
+      <div class="debug">
+        <p v-show="noActionTimer > 10 * 1000" class="debug-warn">No Action Warning! <strong>{{ Math.floor((MAX_TIME_NO_ACTION - noActionTimer) / 1000) }}s</strong></p>
+        <p v-show="hasError" class="debug-warn">{{ errorMsg }}</p>
+        <p>{{ timer }}</p>
+      </div>
     </div>
     <div class="team-view team-one">
       <h2 class="team-title" style="color: #d56871">
@@ -112,6 +116,9 @@ let startTime
 let timer = ref(0)
 let noActionTimer = ref(0);
 
+let hasError = ref(false);
+let errorMsg = ref('');
+
 const teamOneCode = computed(() => encodeTeam(teamOne))
 const teamTwoCode = computed(() => encodeTeam(teamTwo))
 
@@ -122,114 +129,120 @@ let teamOneWins = ref(0);
 let teamTwoWins = ref(0);
 
 const runSim = () => {
-  timer.value = (new Date() - startTime) / 1000
-  noActionTimer.value += timer.value;
+  try {
+    timer.value = (new Date() - startTime) / 1000
+    noActionTimer.value += timer.value;
 
 
-  field.teamOnePlayers = updateTeam(
-    field.teamOnePlayers,
-    teamOneFns.xMoveFn,
-    teamOneFns.yMoveFn,
-    timer.value,
-    teamOneScore.value
-  )
-  field.teamTwoPlayers = updateTeam(
-    field.teamTwoPlayers,
-    teamTwoFns.xMoveFn,
-    teamTwoFns.yMoveFn,
-    timer.value,
-    teamTwoScore.value
-  )
+    field.teamOnePlayers = updateTeam(
+      field.teamOnePlayers,
+      teamOneFns.xMoveFn,
+      teamOneFns.yMoveFn,
+      timer.value,
+      teamOneScore.value
+    )
+    field.teamTwoPlayers = updateTeam(
+      field.teamTwoPlayers,
+      teamTwoFns.xMoveFn,
+      teamTwoFns.yMoveFn,
+      timer.value,
+      teamTwoScore.value
+    )
 
-  /**
-   * Handle flag capture collisions
-   */
-  const collisionIndexes = new Set()
+    /**
+     * Handle flag capture collisions
+     */
+    const collisionIndexes = new Set()
 
-  field.teamOnePlayers.forEach((player) => {
-    field.flags.forEach((point, index) => {
-      if (
-        gridUnit(player.x) === gridUnit(point.x) &&
-        gridUnit(player.y) === gridUnit(point.y)
-      ) {
-        teamOneScore.value++
-        collisionIndexes.add(index)
-      }
+    field.teamOnePlayers.forEach((player) => {
+      field.flags.forEach((point, index) => {
+        if (
+          gridUnit(player.x) === gridUnit(point.x) &&
+          gridUnit(player.y) === gridUnit(point.y)
+        ) {
+          teamOneScore.value++
+          collisionIndexes.add(index)
+        }
+      })
     })
-  })
 
-  field.teamTwoPlayers.forEach((player) => {
-    field.flags.forEach((point, index) => {
-      if (
-        gridUnit(player.x) === gridUnit(point.x) &&
-        gridUnit(player.y) === gridUnit(point.y)
-      ) {
-        teamTwoScore.value++
-        collisionIndexes.add(index)
-      }
+    field.teamTwoPlayers.forEach((player) => {
+      field.flags.forEach((point, index) => {
+        if (
+          gridUnit(player.x) === gridUnit(point.x) &&
+          gridUnit(player.y) === gridUnit(point.y)
+        ) {
+          teamTwoScore.value++
+          collisionIndexes.add(index)
+        }
+      })
     })
-  })
 
-  if (collisionIndexes.length > 0) {
-    noActionTimer.value = 0;
-  }
-
-  collisionIndexes.forEach((index) => {
-    field.flags.splice(index, 1)
-  })
-
-  /**
-   * Handle Player Collisions
-   * 
-   * If two opposing team players collide, then randomly eliminate one of them
-   */
-  const playerCollisions = new Set()
-
-  field.teamOnePlayers.forEach((playerOne, indexOne) => {
-    field.teamTwoPlayers.forEach((playerTwo, indexTwo) => {
-      if (
-        gridUnit(playerOne.x) === gridUnit(playerTwo.x) &&
-        gridUnit(playerOne.y) === gridUnit(playerTwo.y)
-      ) {
-        playerCollisions.add([indexOne, indexTwo])
-      }
-    })
-  })
-
-  if (playerCollisions.length > 0) {
-    noActionTimer.value = 0;
-  }
-
-  playerCollisions.forEach(([indexOne, indexTwo]) => {
-    const randTeam = Math.random() > 0.5 ? 1 : 0
-
-    if (randTeam === 1) {
-      field.teamOnePlayers.splice(indexOne, 1)
+    if (collisionIndexes.length > 0) {
+      noActionTimer.value = 0;
     }
 
-    if (randTeam === 0) {
-      field.teamTwoPlayers.splice(indexTwo, 1)
+    collisionIndexes.forEach((index) => {
+      field.flags.splice(index, 1)
+    })
+
+    /**
+     * Handle Player Collisions
+     * 
+     * If two opposing team players collide, then randomly eliminate one of them
+     */
+    const playerCollisions = new Set()
+
+    field.teamOnePlayers.forEach((playerOne, indexOne) => {
+      field.teamTwoPlayers.forEach((playerTwo, indexTwo) => {
+        if (
+          gridUnit(playerOne.x) === gridUnit(playerTwo.x) &&
+          gridUnit(playerOne.y) === gridUnit(playerTwo.y)
+        ) {
+          playerCollisions.add([indexOne, indexTwo])
+        }
+      })
+    })
+
+    if (playerCollisions.length > 0) {
+      noActionTimer.value = 0;
     }
-  })
 
-  request = window.requestAnimationFrame(runSim);
+    playerCollisions.forEach(([indexOne, indexTwo]) => {
+      const randTeam = Math.random() > 0.5 ? 1 : 0
 
-  // Win Condition
-  if (field.flags.length <= 0 || noActionTimer.value > MAX_TIME_NO_ACTION) {
-    window.cancelAnimationFrame(request);
-    noActionTimer.value = 0;
+      if (randTeam === 1) {
+        field.teamOnePlayers.splice(indexOne, 1)
+      }
 
-    if (teamOneScore.value > teamTwoScore.value) {
-      teamOneWins.value++;
-    } else if (teamOneScore.value < teamTwoScore.value) {
-      teamTwoWins.value++;
-    } else if (teamOneScore.value === teamTwoScore.value) {
-      if (field.teamOnePlayers.length > field.teamTwoPlayers.length) {
+      if (randTeam === 0) {
+        field.teamTwoPlayers.splice(indexTwo, 1)
+      }
+    })
+
+    request = window.requestAnimationFrame(runSim);
+
+    // Win Condition
+    if (field.flags.length <= 0 || noActionTimer.value > MAX_TIME_NO_ACTION) {
+      window.cancelAnimationFrame(request);
+      noActionTimer.value = 0;
+
+      if (teamOneScore.value > teamTwoScore.value) {
         teamOneWins.value++;
-      } else if (field.teamOnePlayers.length < field.teamTwoPlayers.length) {
+      } else if (teamOneScore.value < teamTwoScore.value) {
         teamTwoWins.value++;
+      } else if (teamOneScore.value === teamTwoScore.value) {
+        if (field.teamOnePlayers.length > field.teamTwoPlayers.length) {
+          teamOneWins.value++;
+        } else if (field.teamOnePlayers.length < field.teamTwoPlayers.length) {
+          teamTwoWins.value++;
+        }
       }
     }
+  } catch(error) {
+    hasError.value = true;
+    errorMsg.value = error.message;
+    throw error;
   }
 }
 
@@ -248,18 +261,24 @@ const play = () => {
     field.teamTwoPlayers = []
     field.flags = []
 
-    teamOneFns.xMoveFn = createMoveFunction(teamOne.moveX)
-    teamOneFns.yMoveFn = createMoveFunction(teamOne.moveY)
-    teamOneFns.xPlaceFn = createPlaceFunction(teamOne.placeX)
-    teamOneFns.yPlaceFn = createPlaceFunction(teamOne.placeY)
+    try {
+      teamOneFns.xMoveFn = createMoveFunction(teamOne.moveX)
+      teamOneFns.yMoveFn = createMoveFunction(teamOne.moveY)
+      teamOneFns.xPlaceFn = createPlaceFunction(teamOne.placeX)
+      teamOneFns.yPlaceFn = createPlaceFunction(teamOne.placeY)
 
-    teamTwoFns.xMoveFn = createMoveFunction(teamTwo.moveX)
-    teamTwoFns.yMoveFn = createMoveFunction(teamTwo.moveY)
-    teamTwoFns.xPlaceFn = createPlaceFunction(teamTwo.placeX)
-    teamTwoFns.yPlaceFn = createPlaceFunction(teamTwo.placeY)
+      teamTwoFns.xMoveFn = createMoveFunction(teamTwo.moveX)
+      teamTwoFns.yMoveFn = createMoveFunction(teamTwo.moveY)
+      teamTwoFns.xPlaceFn = createPlaceFunction(teamTwo.placeX)
+      teamTwoFns.yPlaceFn = createPlaceFunction(teamTwo.placeY)
 
-    field.teamOnePlayers = placeTeam(10, teamOneFns.xPlaceFn, teamOneFns.yPlaceFn)
-    field.teamTwoPlayers = placeTeam(10, teamTwoFns.xPlaceFn, teamTwoFns.yPlaceFn)
+      field.teamOnePlayers = placeTeam(10, teamOneFns.xPlaceFn, teamOneFns.yPlaceFn)
+      field.teamTwoPlayers = placeTeam(10, teamTwoFns.xPlaceFn, teamTwoFns.yPlaceFn)
+    } catch(error) {
+    hasError.value = true;
+    errorMsg.value = error.message;
+    throw error;
+  }
 
     for (let index = 0; index < 10; index++) {
       field.flags.push({
@@ -289,6 +308,7 @@ const reset = () => {
   isPlaying.value = false;
   isPaused.value = false;
   noActionTimer.value = 0;
+  timer.value = 0;
 
   teamOneScore.value = 0
   teamTwoScore.value = 0
@@ -372,6 +392,17 @@ body {
   .team-two {
     order: 3;
   }
+}
+
+.debug {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.debug-warn {
+  flex-grow: 1;
+  color: #df1b2b;
 }
 
 .team-view {

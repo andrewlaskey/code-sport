@@ -36,7 +36,7 @@
         <span class="lang-style-2"> moveX</span>(t, i, x, y, vx, vy) {<br />
       </p>
       <code-docs>// Updates player x-position each tick.
-        <br>// t: time delta between frames
+        <br>// t: total time elapsed
         <br>// i: player index
         <br>// x: current x-position
         <br>// y: current y-position
@@ -56,7 +56,7 @@
         <span class="lang-style-2"> moveY</span>(t, i, x, y, vx, vy) {<br />
       </p>
       <code-docs>// Updates player y-position each tick.
-        <br>// t: time delta between frames
+        <br>// t: total time elapsed
         <br>// i: player index
         <br>// x: current x-position
         <br>// y: current y-position
