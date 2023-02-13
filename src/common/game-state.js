@@ -5,3 +5,9 @@ export const playField = {
   teamTwoPlayers: [],
   flags: [],
 };
+
+export const neighborType = {
+  TEAM: 1,
+  ENEMY: -1,
+  FLAG: 0,
+}
