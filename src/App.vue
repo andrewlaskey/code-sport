@@ -19,7 +19,7 @@
         :points="field.flags"
       />
       <div class="debug">
-        <p v-show="noActionTimer > 10 * 1000" class="debug-warn">No Action Warning! <strong>{{ Math.floor((MAX_TIME_NO_ACTION - noActionTimer) / 1000) }}s</strong></p>
+        <p v-show="noActionTimer > 10" class="debug-warn">No Action Warning! <strong>{{ Math.floor(MAX_TIME_NO_ACTION - noActionTimer) }}s</strong></p>
         <p v-show="hasError" class="debug-warn">{{ errorMsg }}</p>
         <p>{{ timer }}</p>
       </div>
@@ -110,6 +110,7 @@ let teamTwoScore = ref(0)
 
 let request
 let startTime
+let prevTime
 let timer = ref(0)
 let noActionTimer = ref(0);
 
@@ -127,8 +128,9 @@ let teamTwoWins = ref(0);
 
 const runSim = () => {
   try {
+    noActionTimer.value += (new Date() - prevTime) / 1000;
     timer.value = (new Date() - startTime) / 1000
-    noActionTimer.value += timer.value;
+    prevTime = new Date();
 
 
     field.teamOnePlayers = updateTeam(
@@ -175,7 +177,7 @@ const runSim = () => {
       })
     })
 
-    if (collisionIndexes.length > 0) {
+    if (collisionIndexes.size > 0) {
       noActionTimer.value = 0;
     }
 
@@ -201,7 +203,7 @@ const runSim = () => {
       })
     })
 
-    if (playerCollisions.length > 0) {
+    if (playerCollisions.size > 0) {
       noActionTimer.value = 0;
     }
 
@@ -251,6 +253,7 @@ const play = () => {
     isPlaying.value = true;
     isPaused.value = false;
     startTime = new Date()
+    prevTime = new Date();
     timer.value = 0
     teamOneScore.value = 0
     teamTwoScore.value = 0
